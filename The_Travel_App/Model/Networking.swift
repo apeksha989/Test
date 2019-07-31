@@ -33,35 +33,33 @@ class Networking: NSObject {
     
     Alamofire.request("\(APPURL.Domain)\(baseCurrency)&target=\(targetCurrency)&apikey=\(Key.CurrencyStack.Key)", method: .get, parameters: ["":""], encoding: URLEncoding.default).validate(statusCode: 200..<299).responseJSON(completionHandler: { response in
    
-      if response.response?.statusCode == 500 {
-         completion(false,"Error", "Selected currency not Available.")
-      }
-      switch response{
-      case let response where response.error?._code == NSURLErrorTimedOut :
-        completion(false,"URL Timed Out", "Please make sure internet connection!")
-        
-      case let response where ((response.result.value) != nil) :
-        if let JSON = response.result.value as? Dictionary<String, AnyObject>{
-          if let status = JSON["status"] as? Int ,(status == 200) {
-            if let rates = JSON["rates"] as? NSDictionary, let getValue = rates.value(forKey: "\(targetCurrency)") as? Double{
-              if let result     = Double(Value.replacingOccurrences(of: ",", with: "", options: NSString.CompareOptions.literal, range: nil)) {
-                let doubleStr = result * getValue
-                let final     = String(format: "%.2f", doubleStr)
-                completion(true,"", final)
-              }
-            }
-          }
-        }else{
-          completion(false,"Error", "")
+        if response.response?.statusCode == 500 {
+            completion(false,"Error", "Selected currency not Available.")
         }
-      case let response where (response.result.value == nil) :
-        completion(false, "Error", "")
         
-      default:
-        print("Default Value")
-      }
+        if response.error?._code == NSURLErrorTimedOut {
+            completion(false,"URL Timed Out", "Please make sure internet connection!")
+        }
+        
+        if response.error?._code == NSURLErrorNetworkConnectionLost {
+            completion(false,"Time Out/Connection Lost Error", "")
+        }
+        
+        if let JSON = response.result.value as? Dictionary<String, AnyObject>{
+            if let status = JSON["status"] as? Int ,(status == 200) {
+                if let rates = JSON["rates"] as? NSDictionary, let getValue = rates.value(forKey: "\(targetCurrency)") as? Double{
+                    if let result = Double(Value.replacingOccurrences(of: ",", with: "", options: NSString.CompareOptions.literal, range: nil)) {
+                        let doubleStr = result * getValue
+                        let final = String(format: "%.2f", doubleStr)
+                        completion(true,"", final)
+                    }
+                }
+            }
+        }else{
+            completion(false,"Error", "")
+        }
     })
-  }
+    }
   
   func requestForGetCountryCode(country : String, completionHandler: @escaping ( _ success: Bool,  _ result: String, _ error: String) -> Void){
     
