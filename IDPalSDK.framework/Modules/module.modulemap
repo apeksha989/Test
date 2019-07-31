@@ -1,0 +1,11 @@
+framework module IDPalSDK {
+  umbrella header "IDPalSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module IDPalSDK.Swift {
+    header "IDPalSDK-Swift.h"
+    requires objc
+}
