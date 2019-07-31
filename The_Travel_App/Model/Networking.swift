@@ -32,7 +32,7 @@ class Networking: NSObject {
   @objc func convertion(baseCurrency : String,targetCurrency: String,Value : String, completion:@escaping (_ success:Bool, _ error:String, _ result: String) -> Void) {
     
     Alamofire.request("\(APPURL.Domain)\(baseCurrency)&target=\(targetCurrency)&apikey=\(Key.CurrencyStack.Key)", method: .get, parameters: ["":""], encoding: URLEncoding.default).validate(statusCode: 200..<299).responseJSON(completionHandler: { response in
-   
+   //changes done by Apeksha
         if response.response?.statusCode == 500 {
             completion(false,"Error", "Selected currency not Available.")
         }
