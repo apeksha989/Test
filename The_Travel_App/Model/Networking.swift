@@ -40,7 +40,7 @@ class Networking: NSObject {
       case let response where response.error?._code == NSURLErrorTimedOut :
         completion(false,"URL Timed Out", "Please make sure internet connection!")
         
-      case let response where (response.result.value != nil) :
+      case let response where ((response.result.value) != nil) :
         if let JSON = response.result.value as? Dictionary<String, AnyObject>{
           if let status = JSON["status"] as? Int ,(status == 200) {
             if let rates = JSON["rates"] as? NSDictionary, let getValue = rates.value(forKey: "\(targetCurrency)") as? Double{
